@@ -1,20 +1,29 @@
 <template>
   <div id="calendar-entry">
     <div class="calendar-entry-note">
-      <input type="text" placeholder="New Event" />
+      <input type="text" placeholder="New Event">
       <p class="calendar-entry-day">
-        Day of event: <span class="bold">Monday</span>
+        Day of event:
+        <span class="bold">{{ titleOfActiveDay }}</span>
       </p>
       <a class="button is-primary is-small is-outlined">Submit</a>
     </div>
   </div>
 </template>
 
-<script lang="ts">
+<script lang='ts'>
 import { Vue, Component } from 'vue-property-decorator';
+import { store } from '../store.js';
 
 @Component
-export default class CalendarEntry extends Vue {}
+export default class CalendarEntry extends Vue {
+
+  private storeData = store;
+
+  get titleOfActiveDay(): string {
+    return this.storeData.getActiveDay().fullTitle;
+  }
+}
 </script>
 
 <style lang="scss" scoped>
