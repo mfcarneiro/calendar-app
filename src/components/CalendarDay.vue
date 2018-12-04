@@ -1,14 +1,15 @@
 <template>
-  <div class="day column">
+  <div class="day column" @click="setActiveDay(day.id)">
     <div class="day-banner has-text-centered">{{ day.abbvTitle }}</div>
     <div class="day-details">
       <div class="day-number">{{ day.id }}</div>
       <div class="day-event">
-      <CalendarEvent
-        v-for="(eventDay, index) of day.events"
-        :key="index"
-        :eventDay="eventDay"
-        :day="day"/>
+        <CalendarEvent
+          v-for="(eventDay, index) of day.events"
+          :key="index"
+          :eventDay="eventDay"
+          :day="day"
+        />
       </div>
     </div>
   </div>
@@ -16,6 +17,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { store } from '../store.js';
 import CalendarEvent from './CalendarEvent.vue';
 
 @Component({
@@ -27,10 +29,13 @@ export default class CalendarDay extends Vue {
   @Prop({})
   private day!: {};
 
-  constructor() {
-    super();
+  private storeData = store;
+
+  public setActiveDay(dayId) {
+    this.storeData.setActiveDay(dayId);
   }
 }
+
 </script>
 
 <style lang="scss" scoped>
