@@ -1,13 +1,14 @@
 <template>
   <div id="calendar-entry">
     <div class="calendar-entry-note">
-      <input type="text" placeholder="New Event">
+      <input type="text" placeholder="New Event" v-model="inputEntry" required>
       <p class="calendar-entry-day">
         Day of event:
         <span class="bold">{{ titleOfActiveDay }}</span>
       </p>
-      <a class="button is-primary is-small is-outlined">Submit</a>
+      <a class="button is-primary is-small is-outlined" @click="submitDayEvent(inputEntry)">Submit</a>
     </div>
+    <p style="color: red; font-size: 13px;" v-if="error">This field can't be empty!</p>
   </div>
 </template>
 
@@ -19,9 +20,21 @@ import { store } from '../store.js';
 export default class CalendarEntry extends Vue {
 
   private storeData = store;
+  private inputEntry: string = '';
+  private error: boolean = false;
 
   get titleOfActiveDay(): string {
     return this.storeData.getActiveDay().fullTitle;
+  }
+
+  private submitDayEvent(eventDetails: string) {
+    if (eventDetails === '') {
+      return this.error = true;
+    }
+
+    this.storeData.submitDayEvent(eventDetails);
+    this.inputEntry = '';
+    this.error = false;
   }
 }
 </script>
