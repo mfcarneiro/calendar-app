@@ -1,10 +1,22 @@
 <template>
   <div class="day-event" :style="getEventBackgroundColor">
-    <div>
-      <span class="has-text-centered details">{{ eventDay.details }}</span>
+    <div v-if="!eventDay.edit">
+      <h2>{{ eventDay.details }}</h2>
       <div class="has-text-centered icons">
-        <i class="fa fa-pencil-square edit-icon"></i>
-        <i class="fa fa-trash-o delete-icon"></i>
+        <i
+          class="fa fa-pencil-square edit-icon"
+          @click="editEventDetails(day.id, eventDay.details)"
+        ></i>
+        <i class="fa fa-trash-o delete-icon" @click="deleteEventDetails(day.id, eventDay.details)"></i>
+      </div>
+    </div>
+    <div v-if="eventDay.edit">
+      <input v-model="newEventDayDetails" type="text" :placeholder="eventDay.details">
+      <div class="has-has-text-centered icons">
+        <i
+          class="fa fa-check"
+          @click="updateEventDetails(day.id, eventDay.details, newEventDayDetails)"
+        ></i>
       </div>
     </div>
   </div>
@@ -12,6 +24,7 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { store } from '../store.js';
 
 @Component
 export default class CalendarEvent extends Vue {
@@ -20,11 +33,33 @@ export default class CalendarEvent extends Vue {
   @Prop({})
   private day!: {};
 
+  private storeData = store;
+  private newEventDayDetails = '';
+
   get getEventBackgroundColor(): string {
     const colors: string[] = ['#FF9999', '#85D6FF', '#99FF99'];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
     return `background-color: ${randomColor}`;
   }
+
+  private editEventDetails(dayId, eventDetails): void {
+    this.storeData.editEvent(dayId, eventDetails);
+  }
+
+  private updateEventDetails(dayId, lastEventDetails, updatedEventDayDetails): void {
+    if (updatedEventDayDetails === '') {
+      updatedEventDayDetails = lastEventDetails;
+    }
+
+    this.storeData.updateEventDetails(dayId, lastEventDetails, updatedEventDayDetails);
+    this.newEventDayDetails = '';
+  }
+
+  private deleteEventDetails(dayId, eventDetails) {
+    this.storeData.deleteDayEvent(dayId, eventDetails);
+  }
+
 }
 </script>
 
